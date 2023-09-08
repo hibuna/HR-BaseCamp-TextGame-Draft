@@ -10,10 +10,21 @@ if TYPE_CHECKING:
 
 
 class Item(Object):
-    ...
+    """An object that can be picked up and put in the inventory."""
+    pass
 
 
-class Equipable:
+class Equipable(Item):
+    """
+    Can be equipped by the player.
+
+    Attributes:
+    -----------
+    slot : EquipableSlot
+        The slot that the item can be equipped in.
+    effects : list[Effect]
+        A list of effects that the item has on the player when equipped.
+    """
     slot: "EquipableSlot"
     effects: list["Effect"]
 
@@ -21,11 +32,11 @@ class Equipable:
         self.effects = effects or []
 
 
-class Weapon(Item, Equipable):
+class Weapon(Equipable):
     damage: int
 
 
-class Armor(Item, Equipable):
+class Armor(Equipable):
     defense: int
 
 

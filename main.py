@@ -3,7 +3,7 @@ import logging
 from containers import Globals, Environments, Items, Objects, Services
 from src.input_resolver import Engine
 
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)  # uncomment to enable debug logging
 
 player = Globals.player()
 player.environment = Environments.town_square()

@@ -4,24 +4,19 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from src.item import Item
     from src.object import Object
-    from src.enums import PlayerAction
-
-
-class Interactable:
-    name: str
-    description: str
-    interactions: dict["PlayerAction", str | dict]
-    _references: list[str]
-
-    @property
-    def references(self):
-        try:
-            return (self._references or []) + [self.name]
-        except AttributeError:
-            return [self.name]
 
 
 class Environment:
+    """
+    An environment is a place in the game universe that contains objects and items.
+
+    Attributes:
+    -----------
+    objects : list[Object]
+        A list of objects in the environment.
+    items : list[Item]
+        A list of items in the environment.
+    """
     name: str
     description: str
 
@@ -36,11 +31,14 @@ class TownSquare(Environment):
     @property
     def description(self):
         str_ = "You are in the town square. "
+
         if self.objects:
             str_ += (f"You see these objects: "
                      f"{', '.join([obj.name for obj in self.objects])}. ")
+
         if self.items:
             str_ += (f"You see these items: "
                      f"{', '.join([item.name for item in self.items])}. ")
+
         return str_.strip()
 

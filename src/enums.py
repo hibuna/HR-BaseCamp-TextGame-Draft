@@ -46,11 +46,11 @@ class PlayerActionPreposition(CustomEnum, metaclass=CustomEnumMeta):
 
 
 class EquipableSlot(CustomEnum, metaclass=CustomEnumMeta):
-    head = enum.auto()
-    body = enum.auto()
-    legs = enum.auto()
-    feet = enum.auto()
-    hand = enum.auto()
-    offhand = enum.auto()
-    neck = enum.auto()
-    finger = enum.auto()
+    HEAD = enum.auto()
+    BODY = enum.auto()
+    LEGS = enum.auto()
+    FEET = enum.auto()
+    HAND = enum.auto()
+    OFFHAND = enum.auto()
+    NECK = enum.auto()
+    FINGER = enum.auto()

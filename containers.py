@@ -3,9 +3,9 @@ from typing import Any, TYPE_CHECKING
 from dependency_injector import containers, providers
 
 from src.effect import WaterBreathing
-from src.environment import TownSquare, Interactable
+from src.environment import TownSquare
 from src.item import Bucket, Sword
-from src.object import Well, Object, River
+from src.object import Well, Object, River, Interactable
 from src.player import Player
 from src.service import WellService, Service, ItemService, RiverService
 
@@ -62,7 +62,7 @@ class Environments(CustomContainer):
 class Services(CustomContainer):
     generic_service = providers.Singleton(
         Service,
-        player=Globals.player,
+        player=Globals.player(),
         effects_c=Effects,
         items_c=Items,
         objects_c=Objects,
@@ -70,7 +70,7 @@ class Services(CustomContainer):
     )
     item_service = providers.Singleton(
         ItemService,
-        player=Globals.player,
+        player=Globals.player(),
         effects_c=Effects,
         items_c=Items,
         objects_c=Objects,
@@ -78,7 +78,7 @@ class Services(CustomContainer):
     )
     well_service = providers.Singleton(
         WellService,
-        player=Globals.player,
+        player=Globals.player(),
         effects_c=Effects,
         items_c=Items,
         objects_c=Objects,
@@ -86,7 +86,7 @@ class Services(CustomContainer):
     )
     river_service = providers.Singleton(
         RiverService,
-        player=Globals.player,
+        player=Globals.player(),
         effects_c=Effects,
         items_c=Items,
         objects_c=Objects,
