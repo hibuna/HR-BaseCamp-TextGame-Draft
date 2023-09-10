@@ -2,8 +2,7 @@ from typing import TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from src.item import Item
-    from src.object import Object
+    from src.object.base import Item, Object
 
 
 class Environment:
@@ -19,10 +18,16 @@ class Environment:
     """
     name: str
     description: str
+    objects: list["Object"]
+    items: list["Item"]
 
     def __init__(self, objects: list[type["Object"]], items: list[type["Item"]] = None):
-        self.objects = objects
+        self.objects = objects or []
         self.items = items or []
+
+    @property
+    def objects_and_items(self):
+        return self.objects + self.items
 
 
 class TownSquare(Environment):

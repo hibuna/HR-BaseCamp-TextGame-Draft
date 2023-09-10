@@ -1,14 +1,11 @@
 import logging
 from typing import TYPE_CHECKING, Optional
 
-from src.enums import EquipableSlot
-
-from src.item import Equipable
-
 if TYPE_CHECKING:
-    from src.item import Item
+    from src.enums import EquipableSlot
     from src.effect import Effect
     from src.environment import Environment
+    from src.object.base import Equipable, Item
 
 
 class Player:
@@ -41,7 +38,7 @@ class Player:
         self.inventory = inventory or []
         self.equipped = equipped or []
 
-    def _get_equipped(self, slot: EquipableSlot) -> Optional["Equipable"]:
+    def _get_equipped(self, slot: "EquipableSlot") -> Optional["Equipable"]:
         """Returns the equipped item in the given slot."""
         return next(iter([item for item in self.equipped if item.slot is slot]), None)
 
@@ -62,19 +59,22 @@ class Player:
 
         return f"You equip {item.name}. {effects}".strip()
 
-    def add_effects(self, effects: ["Effect"]) -> str:
+    def add_effects(self, effects: list["Effect"]) -> str:
         """Adds the given effects to the player."""
+        effects = sorted(set(effects), key=lambda x: x.name)
         logging.debug(f"Adding effects: {effects}")
 
         self.effects.extend(
             [effect for effect in effects if effect not in self.effects]
         )
+
         logging.debug(f"Effects: {self.effects}")
 
-        return (
-            f"You gain the following effects: "
-            f"{', '.join([effect.name for effect in effects])}."
-        ) if effects else ""
+        if effects:
+            effects_str = ', '.join([effect.name for effect in effects])
+            return f"You gain the following effects: {effects_str}."
+
+        return ""
 
     def unequip(self, item: "Equipable") -> str:
         """Unequips the given item."""
@@ -92,6 +92,7 @@ class Player:
 
     def remove_effects(self, effects: list["Effect"]) -> str:
         """Removes the given effects from the player."""
+        effects = sorted(set(effects), key=lambda x: x.name)
         logging.debug(f"Removing effects: {effects}")
 
         self.effects = [
@@ -99,7 +100,8 @@ class Player:
         ]
         logging.debug(f"Effects: {self.effects}")
 
-        return (
-            f"You lose the following effects: "
-            f"{', '.join([effect.name for effect in effects])}."
-        ) if effects else ""
+        if effects:
+            effects_str = ', '.join([effect.name for effect in effects])
+            return f"You lose the following effects: {effects_str}."
+
+        return ""

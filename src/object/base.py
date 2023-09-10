@@ -1,10 +1,8 @@
-import enum
-from typing import TYPE_CHECKING, Optional
-
-from src.enums import PlayerAction
+from typing import TYPE_CHECKING, Optional, Union
 
 if TYPE_CHECKING:
-    from src.item import Item
+    from src.enums import PlayerAction, EquipableSlot
+    from src.effect import Effect
 
 
 class Interactable:
@@ -17,7 +15,7 @@ class Interactable:
         The name of the interactable.
     description : str
         The description of the interactable.
-    interactions : dict[PlayerAction, str | dict]
+    interactions : dict[PlayerAction, Union[str, dict]]
         A list of interactions that the player can perform on the interactable.
     state : Optional[enum.Enum]
         The current state of the interactable.
@@ -30,12 +28,12 @@ class Interactable:
 
     name: str
     description: str
-    interactions: dict["PlayerAction", str | dict]
-    state: Optional["States"]
+    interactions: dict["PlayerAction", Union[str, dict]]
+    state: Optional[States]
     _references: Optional[list[str]]
 
     def __str__(self):
-        return self.name
+        return f"<{self.name}>"
 
     @property
     def references(self):
@@ -58,25 +56,32 @@ class Object(Interactable):
     items: Optional[list["Item"]]
 
 
-class Well(Object):
-    class States(enum.Enum):
-        EMPTY = enum.auto()
-        FULL = enum.auto()
-
-    name = "well"
-    description = "A deep cobblestone well."
-    interactions = [PlayerAction.FILL, PlayerAction.EMPTY, PlayerAction.ENTER]
-    _references = ["water well"]
-    items = None
-    state = States.EMPTY
-
-    fills_until_full = 3
-
-    def __init__(self, items: list["Item"]):
-        self.items = items
+class Item(Interactable):
+    """An object that can be picked up and put in the inventory."""
+    pass
 
 
-class River(Object):
-    name = "river"
-    description = "A river."
-    interactions = [PlayerAction.FILL]
+class Equipable(Item):
+    """
+    Can be equipped by the player.
+
+    Attributes:
+    -----------
+    slot : EquipableSlot
+        The slot that the item can be equipped in.
+    effects : list[Effect]
+        A list of effects that the item has on the player when equipped.
+    """
+    slot: "EquipableSlot"
+    effects: list["Effect"]
+
+    def __init__(self, effects: list["Effect"] = None):
+        self.effects = effects or []
+
+
+class Weapon(Equipable):
+    damage: int
+
+
+class Armor(Equipable):
+    defense: int

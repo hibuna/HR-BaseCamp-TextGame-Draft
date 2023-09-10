@@ -14,38 +14,26 @@ class CustomEnum(enum.Enum):
         return super().__hash__()
 
 
-class CustomEnumMeta(enum.EnumMeta):
-    def __getitem__(self, name: str):
-        try:
-            return super().__getitem__(name.upper())
-        except KeyError:
-            return None
-
-    def __contains__(self, item: str | enum.Enum):
-        if isinstance(item, str):
-            return item.upper() in self.__members__
-        return super().__contains__(item)
-
-
-class PlayerAction(CustomEnum, metaclass=CustomEnumMeta):
+class PlayerAction(CustomEnum):
+    QUIT = enum.auto()
     HELP = enum.auto()
-    ENTER = enum.auto()
-    FILL = enum.auto()
-    EMPTY = enum.auto()
+    INSPECT = enum.auto()
     PICKUP = enum.auto()
     EQUIP = enum.auto()
     UNEQUIP = enum.auto()
-    INSPECT = enum.auto()
+    ENTER = enum.auto()
+    FILL = enum.auto()
+    EMPTY = enum.auto()
 
 
-class PlayerActionPreposition(CustomEnum, metaclass=CustomEnumMeta):
+class PlayerActionPreposition(CustomEnum):
     WITH = enum.auto()
     ON = enum.auto()
     INTO = enum.auto()
     IN = enum.auto()
 
 
-class EquipableSlot(CustomEnum, metaclass=CustomEnumMeta):
+class EquipableSlot(CustomEnum):
     HEAD = enum.auto()
     BODY = enum.auto()
     LEGS = enum.auto()
@@ -54,3 +42,10 @@ class EquipableSlot(CustomEnum, metaclass=CustomEnumMeta):
     OFFHAND = enum.auto()
     NECK = enum.auto()
     FINGER = enum.auto()
+
+
+class UsageFormat(CustomEnum):
+    ACTION = enum.auto()
+    OBJECT = enum.auto()
+    PREPOSITION = enum.auto()
+    PREPOSITION_OBJECT = enum.auto()
