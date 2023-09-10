@@ -13,6 +13,12 @@ class Effect:
     name: str
     description: str
 
+    def __repr__(self):
+        return f"<{str(self)}>"
+
+    def __str__(self):
+        return f"{self.name.upper()}"
+
 
 class WaterBreathing(Effect):
     name = "Water Breathing"

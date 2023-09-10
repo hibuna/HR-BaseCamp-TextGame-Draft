@@ -31,10 +31,12 @@ class Player:
 
     def __init__(
         self,
+        environment: "Environment" = None,
         effects: list["Effect"] = None,
         inventory: list["Item"] = None,
         equipped: list["Equipable"] = None,
     ):
+        self.environment = environment
         self.effects = effects or []
         self.inventory = inventory or []
         self.equipped = equipped or []
@@ -48,17 +50,17 @@ class Player:
         logging.debug(f"Equipping item: {item}")
 
         if item in self.equipped:
-            return f"You already have {item} equipped."
+            return f"Already equipped: {item}."
 
         if self._get_equipped(item.slot):
-            return f"You already have something equipped in the {item.slot} slot."
+            return f"You already have something equipped: {item.slot}"
 
         self.equipped.append(item)
         logging.debug(f"Equipment: {self.equipped}")
 
         effects = self.add_effects(item.effects)
 
-        return f"You equip {item.name}. {effects}".strip()
+        return f"Equipped: {item}. {effects}".strip()
 
     def add_effects(self, effects: list["Effect"]) -> str:
         """Adds the given effects to the player."""
@@ -72,7 +74,7 @@ class Player:
         logging.debug(f"Effects: {self.effects}")
 
         if effects:
-            effects_str = ", ".join([effect.name for effect in effects])
+            effects_str = ", ".join([effect.name.upper() for effect in effects])
             return f"You gain the following effects: {effects_str}."
 
         return ""
@@ -82,14 +84,14 @@ class Player:
         logging.debug(f"Unequipping item: {item}")
 
         if item not in self.equipped:
-            return f"You don't have {item.name} equipped."
+            return f"You don't have that equipped: {item}"
 
         self.equipped.remove(item)
         logging.debug(f"Equipment: {self.equipped}")
 
         effects = self.remove_effects(item.effects)
 
-        return f"You unequip {item.name}. {effects}".strip()
+        return f"Unequipped: {item}. {effects}".strip()
 
     def remove_effects(self, effects: list["Effect"]) -> str:
         """Removes the given effects from the player."""
@@ -100,7 +102,7 @@ class Player:
         logging.debug(f"Effects: {self.effects}")
 
         if effects:
-            effects_str = ", ".join([effect.name for effect in effects])
+            effects_str = ", ".join([effect.name.upper() for effect in effects])
             return f"You lose the following effects: {effects_str}."
 
         return ""

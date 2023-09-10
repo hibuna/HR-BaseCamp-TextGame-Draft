@@ -33,8 +33,11 @@ class Interactable:
     state: Optional[States]
     _references: Optional[list[str]]
 
+    def __repr__(self):
+        return f"<{str(self)}>"
+
     def __str__(self):
-        return f"<{self.name}>"
+        return f"{self.name.upper()}"
 
     @property
     def references(self):

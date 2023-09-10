@@ -1,7 +1,7 @@
 import logging
 from typing import TYPE_CHECKING, Optional, Union
 
-from src.utils import casefold_index, enum_has, subclass_in_list
+from src.utils import casefold_index, enum_has, subclass_in_list, enum_get
 from src.enums import PlayerAction, PlayerActionPreposition, UsageFormat
 from src.object.base import Object, Item
 
@@ -97,7 +97,7 @@ class Command:
         return any(enum_has(word, PlayerActionPreposition) for word in dissected_cmd)
 
     @staticmethod
-    def _extract_action(dissected_cmd: list[str]) -> Optional[str]:
+    def _extract_action(dissected_cmd: list[str]) -> str:
         return dissected_cmd[0]
 
     def _extract_preposition(self, dissected_cmd: list[str]) -> Optional[str]:
@@ -159,21 +159,21 @@ class CommandValidator:
         if self.cmd.action_str == "":
             return
         if not enum_has(self.cmd.action_str, PlayerAction) or not self._usages:
-            raise ValueError(f"Action {self.cmd.action_str} is not recognized")
+            raise ValueError(f"Action not recognized: {self.cmd.action_str.upper()}")
 
     def _validate_object(self) -> None:
-        if self._object_required and not self.cmd.object_str:
-            raise ValueError(f"Action {self.cmd.action_str} requires an object")
-
         if not self._object_required and not self.cmd.object_str:
             return
 
+        if self._object_required and not self.cmd.object_str:
+            raise ValueError(f"Action requires object: {self.cmd.action_str.upper()}")
+
         if not self._object or not self._object_available(self._object):
-            raise ValueError(f"Object not found: {self.cmd.object_str}")
+            raise ValueError(f"Object not found: {self.cmd.object_str.upper()}")
 
         if self.cmd.action_str not in self._object.interactions:
             raise ValueError(
-                f"Cannot perform {self.cmd.action_str} on '{self.cmd.object_str}'"
+                f"Cannot perform: {self.cmd.action_str.upper()} on {self.cmd.object_str.upper()}"
             )
 
     def _validate_preposition(self) -> None:
@@ -181,31 +181,31 @@ class CommandValidator:
             return
 
         if self._preposition_required and not self.cmd.preposition_str:
-            raise ValueError(f"Action {self.cmd.action_str} requires a preposition")
+            raise ValueError(
+                f"Action requires preposition: {self.cmd.action_str.upper()}"
+            )
 
         if not enum_has(self.cmd.preposition_str, PlayerActionPreposition):
-            raise ValueError(f"Preposition not found: {self.cmd.preposition_str}")
-
-        if self._preposition_object_required and not self.cmd.preposition_str:
-            raise ValueError(f"Preposition not found: {self.cmd.preposition_str}")
-
-        if not self._preposition_object_required and not self.cmd.preposition_str:
-            return
+            raise ValueError(
+                f"Preposition not recognized: {self.cmd.preposition_str.upper()}"
+            )
 
         if self.cmd.preposition_str not in self._expected_prepositions:
             raise ValueError(
-                f"Action {self.cmd.action_str} has no preposition {self.cmd.preposition_str}"
+                f"Cannot perform: {self.cmd.action_str.upper()} with {self.cmd.preposition_str.upper()}"
             )
 
     def _validate_preposition_object(self) -> None:
-        if self._preposition_object_required and not self.cmd.preposition_object_str:
-            raise ValueError(f"{self.cmd.action_str} {self.cmd.preposition_str} what?")
-
         if (
             not self._preposition_object_required
             and not self.cmd.preposition_object_str
         ):
             return
+
+        if self._preposition_object_required and not self.cmd.preposition_object_str:
+            raise ValueError(
+                f"Missing object after preposition: {self.cmd.preposition_str.upper()}"
+            )
 
         object_unavailable = (
             not self._preposition_object
@@ -215,11 +215,13 @@ class CommandValidator:
             and not self._holding_object(self._preposition_object)
         )
         if object_unavailable:
-            raise ValueError(f"Object not found: {self.cmd.preposition_object_str}")
+            raise ValueError(
+                f"Object not found: {self.cmd.preposition_object_str.upper()}"
+            )
 
     def _validate_usage(self) -> None:
         if not self._usage:
-            raise ValueError(f"Invalid usage for action {self.cmd.action_str}")
+            raise ValueError(f"Invalid usage for action {self.cmd.action_str.upper()}")
 
     def _is_item(self, object_: "Object") -> bool:
         return issubclass(type(object_), Item)
@@ -238,7 +240,8 @@ class CommandValidator:
 
     @property
     def _usages(self) -> list[CommandUsage]:
-        return self._config.action_usage_mapping.get(self.cmd.action_str, [])
+        enum_action = enum_get(self.cmd.action_str, PlayerAction)
+        return self._config.action_usage_mapping.get(enum_action, [])
 
     @property
     def _usage(self) -> Optional[CommandUsage]:
@@ -281,7 +284,8 @@ class CommandValidator:
     @property
     def _valid_object_amts(self) -> list[int]:
         """Check if command has an appropriate amount of objects."""
-        return self._config.action_object_amt_mapping.get(self.cmd.action_str, [])
+        enum_action = enum_get(self.cmd.action_str, PlayerAction)
+        return self._config.action_object_amt_mapping.get(enum_action, [])
 
     @property
     def _object_required(self):
