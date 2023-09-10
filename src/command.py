@@ -17,10 +17,12 @@ class switch_command_objects:
 
     def _switch_objects(self):
         self.cmd.object_str, self.cmd.preposition_object_str = (
-            self.cmd.preposition_object_str, self.cmd.object_str
+            self.cmd.preposition_object_str,
+            self.cmd.object_str,
         )
         self.cmd.object, self.cmd.preposition_object = (
-            self.cmd.preposition_object, self.cmd.object
+            self.cmd.preposition_object,
+            self.cmd.object,
         )
 
     def __enter__(self):
@@ -40,7 +42,9 @@ class CommandUsage:
 
     def __str__(self):
         object_types = [t.__name__ for t in self.object_types or []]
-        preposition_object_types = [t.__name__ for t in self.preposition_object_types or []]
+        preposition_object_types = [
+            t.__name__ for t in self.preposition_object_types or []
+        ]
         return f"{self.action} {object_types} {self.preposition} {preposition_object_types}"
 
     def __repr__(self):
@@ -251,7 +255,9 @@ class CommandValidator:
         if self._preposition_object and not usage.preposition_object_types:
             return False
         if self._preposition_object and usage.preposition_object_types:
-            if not subclass_in_list(self._preposition_object, usage.preposition_object_types):
+            if not subclass_in_list(
+                self._preposition_object, usage.preposition_object_types
+            ):
                 return False
         if usage.object_amt != self._object_amt:
             return False
@@ -268,7 +274,9 @@ class CommandValidator:
     @property
     def _object_amt(self) -> int:
         """Check if command has an appropriate amount of objects."""
-        return len([b for b in [self.cmd.object_str, self.cmd.preposition_object_str] if b])
+        return len(
+            [b for b in [self.cmd.object_str, self.cmd.preposition_object_str] if b]
+        )
 
     @property
     def _valid_object_amts(self) -> list[int]:
@@ -276,24 +284,8 @@ class CommandValidator:
         return self._config.action_object_amt_mapping.get(self.cmd.action_str, [])
 
     @property
-    def _(self):
-        return self._config.action_usage_mapping
-
-    @property
     def _object_required(self):
         return 0 not in self._valid_object_amts
-
-    # @property
-    # def _no_objects_allowed(self):
-    #     return 0 in self._valid_object_amts
-    #
-    # @property
-    # def _object_allowed(self):
-    #     return overlap([1, 2], self._valid_object_amts)
-    #
-    # @property
-    # def _preposition_object_allowed(self):
-    #     return 2 in self._valid_object_amts
 
     @property
     def _preposition_object_required(self):

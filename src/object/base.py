@@ -23,6 +23,7 @@ class Interactable:
         A list of names that can be used to reference the interactable.
         Accessed via the `references` property. Defaults to the interactable's name.
     """
+
     class States:
         pass
 
@@ -53,11 +54,13 @@ class Object(Interactable):
     items : Optional[list[Item]]
         A list of items that the object contains.
     """
+
     items: Optional[list["Item"]]
 
 
 class Item(Interactable):
     """An object that can be picked up and put in the inventory."""
+
     pass
 
 
@@ -72,6 +75,7 @@ class Equipable(Item):
     effects : list[Effect]
         A list of effects that the item has on the player when equipped.
     """
+
     slot: "EquipableSlot"
     effects: list["Effect"]
 

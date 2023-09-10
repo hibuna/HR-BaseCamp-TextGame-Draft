@@ -16,6 +16,7 @@ class Environment:
     items : list[Item]
         A list of items in the environment.
     """
+
     name: str
     description: str
     objects: list["Object"]
@@ -38,12 +39,15 @@ class TownSquare(Environment):
         str_ = "You are in the town square. "
 
         if self.objects:
-            str_ += (f"You see these objects: "
-                     f"{', '.join([obj.name for obj in self.objects])}. ")
+            str_ += (
+                f"You see these objects: "
+                f"{', '.join([obj.name for obj in self.objects])}. "
+            )
 
         if self.items:
-            str_ += (f"You see these items: "
-                     f"{', '.join([item.name for item in self.items])}. ")
+            str_ += (
+                f"You see these items: "
+                f"{', '.join([item.name for item in self.items])}. "
+            )
 
         return str_.strip()
-

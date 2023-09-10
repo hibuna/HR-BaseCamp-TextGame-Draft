@@ -16,7 +16,10 @@ class Well(Object):
     name = "well"
     description = "A deep cobblestone well."
     interactions = [
-        PlayerAction.INSPECT, PlayerAction.FILL, PlayerAction.EMPTY, PlayerAction.ENTER
+        PlayerAction.INSPECT,
+        PlayerAction.FILL,
+        PlayerAction.EMPTY,
+        PlayerAction.ENTER,
     ]
     _references = ["water well"]
     items = None

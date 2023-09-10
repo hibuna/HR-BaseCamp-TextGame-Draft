@@ -25,14 +25,15 @@ class Player:
     equipped : list[Equipable]
         A list of items that the player has equipped.
     """
+
     name: str = "player"
     environment: "Environment"
 
     def __init__(
-            self,
-            effects: list["Effect"] = None,
-            inventory: list["Item"] = None,
-            equipped: list["Equipable"] = None,
+        self,
+        effects: list["Effect"] = None,
+        inventory: list["Item"] = None,
+        equipped: list["Equipable"] = None,
     ):
         self.effects = effects or []
         self.inventory = inventory or []
@@ -71,7 +72,7 @@ class Player:
         logging.debug(f"Effects: {self.effects}")
 
         if effects:
-            effects_str = ', '.join([effect.name for effect in effects])
+            effects_str = ", ".join([effect.name for effect in effects])
             return f"You gain the following effects: {effects_str}."
 
         return ""
@@ -95,13 +96,11 @@ class Player:
         effects = sorted(set(effects), key=lambda x: x.name)
         logging.debug(f"Removing effects: {effects}")
 
-        self.effects = [
-            effect for effect in self.effects if effect not in effects
-        ]
+        self.effects = [effect for effect in self.effects if effect not in effects]
         logging.debug(f"Effects: {self.effects}")
 
         if effects:
-            effects_str = ', '.join([effect.name for effect in effects])
+            effects_str = ", ".join([effect.name for effect in effects])
             return f"You lose the following effects: {effects_str}."
 
         return ""

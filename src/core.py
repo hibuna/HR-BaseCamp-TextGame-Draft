@@ -26,14 +26,14 @@ class Engine:
     config: type["Config"]
 
     def __new__(
-            cls,
-            player: "Player",
-            items_c: type["Items"],
-            objects_c: type["Objects"],
-            services_c: type["Services"],
-            resolvers_c: type["Resolvers"],
-            command_validator: "CommandValidator",
-            config: type["Config"],
+        cls,
+        player: "Player",
+        items_c: type["Items"],
+        objects_c: type["Objects"],
+        services_c: type["Services"],
+        resolvers_c: type["Resolvers"],
+        command_validator: "CommandValidator",
+        config: type["Config"],
     ):
         cls.player = player
         cls.items_c = items_c

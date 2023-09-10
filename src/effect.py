@@ -9,6 +9,7 @@ class Effect:
     description : str
         The description of the effect.
     """
+
     name: str
     description: str
 

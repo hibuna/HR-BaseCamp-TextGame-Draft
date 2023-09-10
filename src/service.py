@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from src.command import Command
 
 
-T = TypeVar('T', bound=Object)
+T = TypeVar("T", bound=Object)
 
 
 class Service(Generic[T]):
@@ -38,15 +38,16 @@ class Service(Generic[T]):
     _action_mapping : dict[PlayerAction, function]
         A mapping of actions to functions that perform the action.
     """
+
     object_type: T = type(None)
 
     def __init__(
-            self,
-            player: "Player",
-            effects_c: "Effects",
-            items_c: "Items",
-            objects_c: "Objects",
-            environments_c: "Environments"
+        self,
+        player: "Player",
+        effects_c: "Effects",
+        items_c: "Items",
+        objects_c: "Objects",
+        environments_c: "Environments",
     ):
         self._player = player
         self._effects_c = effects_c
@@ -132,7 +133,7 @@ class ItemService(Service[Item]):
         return self._player.equip(cmd.object)  # noqa
 
     def _unequip(self, cmd: "Command") -> str:
-        """Generic item unequip method."""""
+        """Generic item unequip method.""" ""
         if not issubclass(type(cmd.object), Equipable):
             return "You can't unequip that."
 
@@ -248,6 +249,7 @@ class BucketService(ItemService):
     def _fill(self, cmd: "Command") -> str:
         if isinstance(cmd.preposition_object, type(self._objects_c.river())):
             from src.containers import Services
+
             with switch_command_objects(cmd):
                 return Services.river_service()._fill(cmd)
 
@@ -261,5 +263,6 @@ class BucketService(ItemService):
         cmd.preposition_object: "Well"  # noqa
 
         from src.containers import Services
+
         with switch_command_objects(cmd):
             return Services.well_service()._fill(cmd)

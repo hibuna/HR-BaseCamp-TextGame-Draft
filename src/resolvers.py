@@ -72,7 +72,9 @@ class ServiceResolver(Resolver):
                 return resolved
 
     @staticmethod
-    def _resolve_by_object_type(object_: Union["Object", "Item"], v: Any) -> Optional["Object"]:
+    def _resolve_by_object_type(
+        object_: Union["Object", "Item"], v: Any
+    ) -> Optional["Object"]:
         type_ = object_
         if not isinstance(object_, type):
             type_ = type(object_)
@@ -84,7 +86,9 @@ class CommandObjectResolver:
     def __init__(self, items_r: ItemResolver, objects_r: ObjectResolver):
         self._resolvers = [items_r, objects_r]
 
-    def resolve(self, object_: Union[str, "Item", "Object"]) -> Optional[Union["Item", "Object"]]:
+    def resolve(
+        self, object_: Union[str, "Item", "Object"]
+    ) -> Optional[Union["Item", "Object"]]:
         return self._resolve_with_resolvers(object_)
 
     def resolve_command(self, command: "Command") -> "Command":
@@ -96,7 +100,9 @@ class CommandObjectResolver:
         )
         return command
 
-    def _resolve_with_resolvers(self, object_: str) -> Optional[Union["Item", "Object"]]:
+    def _resolve_with_resolvers(
+        self, object_: str
+    ) -> Optional[Union["Item", "Object"]]:
         for resolver in self._resolvers:
             resolved_object = resolver.resolve(object_)
             if resolved_object:

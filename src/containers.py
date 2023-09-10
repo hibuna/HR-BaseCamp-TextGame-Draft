@@ -30,10 +30,7 @@ class Effects(DeclarativeContainer):
 
 
 class Items(CustomContainer):
-    bucket = Singleton(
-        Bucket,
-        effects=[Effects.water_breathing()]
-    )
+    bucket = Singleton(Bucket, effects=[Effects.water_breathing()])
     sword = Singleton(Sword)
 
 
