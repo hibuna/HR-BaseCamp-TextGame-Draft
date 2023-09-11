@@ -24,7 +24,8 @@ class ObjectResolver(Resolver):
         for k, v in self.container.members().items():
             v = v()
             if isinstance(object_, str):
-                return self._resolve_by_str(object_, k, v)
+                if resolved := self._resolve_by_str(object_, k, v):
+                    return resolved
             if subclass_in_list(object_, [Item, Object]):
                 if isinstance(v, object_):
                     return v
