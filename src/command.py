@@ -87,6 +87,9 @@ class Command:
             self.dissected_cmd
         )
 
+    def __str__(self):
+        return f"Command({self.action_str}:{self.action} {self.object_str}:{self.object} {self.preposition_str}:{self.preposition} {self.preposition_object_str}:{self.preposition_object})"
+
     @staticmethod
     def _dissect_cmd(command: str) -> list[str]:
         """Remove extra spaces and split the command into a list of words."""

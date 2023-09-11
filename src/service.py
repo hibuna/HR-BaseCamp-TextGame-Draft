@@ -70,7 +70,7 @@ class Service(Generic[T]):
         object."""
         action_method = self._action_mapping.get(cmd.action)
         if action_method is None:
-            raise ValueError(f"Action '{cmd.action_str}' is not recognized")
+            raise ValueError(f"Action '{cmd.action_str.upper()}' is not recognized")
         return action_method(cmd)  # noqa
 
     def _pickup(self, cmd: "Command") -> str:
@@ -117,7 +117,7 @@ class ItemService(Service[Item]):
         self._player.environment.items.remove(cmd.object)
         self._player.inventory.append(cmd.object)
 
-        return f"You pick up '{cmd.object}'."
+        return f"Picked up: {cmd.object.name.upper()}"
 
     def _equip(self, cmd: "Command") -> str:
         """Generic item equip method."""
@@ -134,8 +134,8 @@ class ItemService(Service[Item]):
 
     def _unequip(self, cmd: "Command") -> str:
         """Generic item unequip method.""" ""
-        if not issubclass(type(cmd.object), Equipable):
-            return "You can't unequip that."
+        if cmd.object not in self._player.equipped:
+            return f"You don't have that equipped: {cmd.object.name.upper()}"
 
         return self._player.unequip(cmd.object)  # noqa
 
@@ -147,7 +147,9 @@ class WellService(Service[Well]):
         cmd.object: Well  # noqa
 
         if not isinstance(cmd.preposition_object, type(self._items_c.bucket())):
-            return f"You can't fill the well with '{cmd.preposition_object}'."
+            return (
+                f"You can't fill the well with '{cmd.preposition_object.name.upper()}'."
+            )
         cmd.preposition_object: "Bucket"  # noqa
 
         if cmd.preposition_object not in self._player.inventory:
@@ -226,7 +228,7 @@ class RiverService(Service[River]):
     def _fill(self, cmd: "Command") -> str:
         if isinstance(cmd.preposition_object, type(self._items_c.bucket())):
             return self._fill_bucket(cmd.preposition_object)  # noqa
-        return f"You can't fill '{cmd.preposition_object}' in the river."
+        return f"You can't fill that: {cmd.preposition_object.name.upper()}"
 
 
 class BucketService(ItemService):
@@ -253,13 +255,13 @@ class BucketService(ItemService):
             with switch_command_objects(cmd):
                 return Services.river_service()._fill(cmd)
 
-        return f"You can't fill '{cmd.preposition_object}' in the river."
+        return f"You can't fill that: {cmd.preposition_object.name.upper()}"
 
     def _empty(self, cmd: "Command") -> str:
         cmd.object: Bucket  # noqa
 
         if cmd.preposition_object is not self._objects_c.well():
-            return f"You can't empty '{cmd.preposition_object}' in the well."
+            return f"You can't empty that there: {cmd.preposition_object.name.upper()}"
         cmd.preposition_object: "Well"  # noqa
 
         from src.containers import Services

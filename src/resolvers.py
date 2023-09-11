@@ -2,13 +2,12 @@ from typing import TYPE_CHECKING, Optional, Union, Any
 
 from src.enums import PlayerAction
 from src.service import Service
-from src.utils import casefold_equals, casefold_in, enum_get
-from src.object.base import Object
+from src.utils import casefold_equals, casefold_in, enum_get, subclass_in_list
+from src.object.base import Object, Item
 
 if TYPE_CHECKING:
     from src.containers import CustomContainer, Services, Objects, Items
     from src.command import Command
-    from src.object.base import Item
 
 
 class Resolver:
@@ -24,31 +23,19 @@ class ObjectResolver(Resolver):
         """Returns the object with the given name."""
         for k, v in self.container.members().items():
             v = v()
-            resolved = self._resolve_by_str(object_, k, v)
-            resolved = resolved or self._resolve_by_object_type(object_, v)
-            if resolved:
-                return resolved
+            if isinstance(object_, str):
+                return self._resolve_by_str(object_, k, v)
+            if subclass_in_list(object_, [Item, Object]):
+                if isinstance(v, object_):
+                    return v
 
     @staticmethod
-    def _resolve_by_str(object_: Any, k: Any, v: Any) -> Optional["Object"]:
-        if not isinstance(object_, str):
-            return
+    def _resolve_by_str(object_: str, k: str, v: Any) -> Optional["Object"]:
         if casefold_equals(object_, k):
             return v
         if hasattr(v, "name") and casefold_equals(object_, v.name):
             return v
         if hasattr(v, "_references") and casefold_in(object_, v._references):
-            return v
-
-    @staticmethod
-    def _resolve_by_object_type(object_: Any, v: Any) -> Optional["Object"]:
-        if not type(object_) is type:
-            return
-        if not issubclass(type(v), Object):
-            return
-        if v is object_:
-            return v
-        if isinstance(v, object_):
             return v
 
 
@@ -67,19 +54,11 @@ class ServiceResolver(Resolver):
         serving the passed object class"""
         for k, v in self.container.members().items():
             v = v()
-            resolved = self._resolve_by_object_type(object_, v)
-            if resolved:
-                return resolved
-
-    @staticmethod
-    def _resolve_by_object_type(
-        object_: Union["Object", "Item"], v: Any
-    ) -> Optional["Object"]:
-        type_ = object_
-        if not isinstance(object_, type):
-            type_ = type(object_)
-        if type_ is v.object_type:
-            return v
+            type_ = object_
+            if not isinstance(object_, type):
+                type_ = type(object_)
+            if type_ is v.object_type:
+                return v
 
 
 class CommandObjectResolver:
