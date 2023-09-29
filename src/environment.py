@@ -59,12 +59,7 @@ class Environment:
 
 class PrologueCockpit(Environment):
     name = "burning cockpit"
-
-    @property
-    def description(self):
-        str_ = "You wake up, hazily. You have a headache, and it's not from the loud buzzing alarms. You smell fire. You see fire. You feel fire. Fuck. "
-        str_ += self.shown_objects_and_items_str
-        return str_.strip()
+    description = "You wake up, hazily. You have a headache, and it's not from the loud buzzing alarms. You smell fire. You see fire. You feel fire. Fuck."
 
 
 class Cockpit(Environment):

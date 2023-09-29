@@ -95,8 +95,12 @@ class Service(Generic[T]):
 
     def _inspect(self, cmd: "Command") -> str:
         """Default inspect method. Can be overridden by subclasses."""
-        object_ = cmd.object or self._player.environment
-        return object_.description
+        if cmd.object:
+            return cmd.object.description
+
+        description = self._player.environment.description
+        objects = self._player.environment.shown_objects_and_items_str
+        return " ".join((description, objects))
 
     def _enter(self, cmd: "Command") -> str:
         """Default enter method. Can be overridden by subclasses."""
