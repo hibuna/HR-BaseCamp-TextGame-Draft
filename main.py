@@ -11,7 +11,7 @@ if overlap(["-d", "--debug"], sys.argv[1:]):
     logging.basicConfig(level=logging.DEBUG)
 
 player = Globals.player()
-player.environment = Environments.town_square()
+player.environment = Environments.prologue_cockpit()
 
 command_validator = CommandValidator(
     player=player,

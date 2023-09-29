@@ -21,9 +21,14 @@ class PlayerAction(CustomEnum):
     PICKUP = enum.auto()
     EQUIP = enum.auto()
     UNEQUIP = enum.auto()
+    HIT = enum.auto()
     ENTER = enum.auto()
     FILL = enum.auto()
     EMPTY = enum.auto()
+    TURN = enum.auto()
+    USE = enum.auto()
+    PRESS = enum.auto()
+    OPEN = enum.auto()
 
 
 class PlayerActionPreposition(CustomEnum):

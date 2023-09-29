@@ -2,9 +2,12 @@ from typing import TYPE_CHECKING, Generic, TypeVar
 
 from src.enums import PlayerAction
 from src.object.base import Object, Item, Equipable
-from src.object.objects import Well, River
-from src.object.items import Bucket
-from src.command import switch_command_objects
+from src.object.objects import (
+    HeavyDoor,
+    PrologueControlPanel,
+    PrologueControlPanelButton,
+    HeavyDoorWheel,
+)
 
 
 if TYPE_CHECKING:
@@ -63,6 +66,11 @@ class Service(Generic[T]):
             PlayerAction.EMPTY: self._empty,
             PlayerAction.INSPECT: self._inspect,
             PlayerAction.ENTER: self._enter,
+            PlayerAction.USE: self._use,
+            PlayerAction.HIT: self._hit,
+            PlayerAction.TURN: self._turn,
+            PlayerAction.PRESS: self._press,
+            PlayerAction.OPEN: self._open,
         }
 
     def interact(self, cmd: "Command") -> str:
@@ -102,6 +110,26 @@ class Service(Generic[T]):
         """Default unequip method. Can be overridden by subclasses."""
         return "You can't unequip that."
 
+    def _use(self, cmd: "Command") -> str:
+        """Default use method. Can be overridden by subclasses."""
+        return "You can't use that."
+
+    def _hit(self, cmd: "Command") -> str:
+        """Default hit method. Can be overridden by subclasses."""
+        return f"You hit {cmd.object}. Nothing happens."
+
+    def _turn(self, cmd: "Command") -> str:
+        """Default turn method. Can be overridden by subclasses."""
+        return "You can't turn that."
+
+    def _press(self, cmd: "Command") -> str:
+        """Default press method. Can be overridden by subclasses."""
+        return "You can't press that."
+
+    def _open(self, cmd: "Command") -> str:
+        """Default open method. Can be overridden by subclasses."""
+        return "You can't open that."
+
 
 class ItemService(Service[Item]):
     object_type = Item
@@ -140,131 +168,52 @@ class ItemService(Service[Item]):
         return self._player.unequip(cmd.object)  # noqa
 
 
-class WellService(Service[Well]):
-    object_type = Well
+class PrologueControlPanelService(Service[PrologueControlPanel]):
+    object_type = PrologueControlPanel
 
-    def _fill(self, cmd: "Command") -> str:
-        cmd.object: Well  # noqa
 
-        if not isinstance(cmd.preposition_object, type(self._items_c.bucket())):
-            return (
-                f"You can't fill the well with '{cmd.preposition_object.name.upper()}'."
-            )
-        cmd.preposition_object: "Bucket"  # noqa
+class PrologueControlPanelButtonService(Service[PrologueControlPanelButton]):
+    object_type = PrologueControlPanelButton
 
-        if cmd.preposition_object not in self._player.inventory:
-            return "You don't have that."
+    def _press(self, cmd: "Command") -> str:
+        self._player.environment = self._environments_c.cockpit()
+        return "A vent opens and you hear a hissing sound. You start feeling woozy and pass out."
 
-        if cmd.preposition_object in self._player.equipped:
-            return "You can't fill the well with something you have equipped."
+    def _use(self, cmd: "Command"):
+        return self._press(cmd)
 
-        if cmd.preposition_object.state is cmd.preposition_object.States.EMPTY:
-            return "The bucket is empty."
+    def _hit(self, cmd: "Command"):
+        return self._press(cmd)
 
-        if cmd.preposition_object.state is not cmd.preposition_object.States.WATER:
-            return "You don't think filling the well with that is a good idea."
 
-        if cmd.object.state is self.object_type.States.FULL:
-            return "The well is already full."
+class HeavyDoorService(Service[HeavyDoor]):
+    object_type = HeavyDoor
 
-        cmd.object.fills_until_full -= 1
-        cmd.preposition_object.state = cmd.preposition_object.States.EMPTY
-
-        if cmd.object.fills_until_full == 0:
-            cmd.object.state = self.object_type.States.FULL
-            return "The well is full of water."
-
-        return "You fill the well with water."
-
-    def _inspect(self, cmd: "Command") -> str:
-        cmd.object: Well  # noqa
-
-        str_ = cmd.object.description
-        if cmd.object.state is cmd.object.States.FULL:
-            str_ += " The well is full of water."
-        elif cmd.object.fills_until_full:
-            str_ += " The well has some water in it."
-        else:
-            str_ += " The well is empty."
-
-        return str_
-
-    def _enter(self, cmd: "Command") -> str:
-        if cmd.object.state is not self.object_type.States.FULL:
-            return "Your body refuses to jump in without a way back up."
-
-        if self._effects_c.water_breathing() in self._player.effects:
-            cmd.object.items.remove(self._items_c.sword())
-            self._player.inventory.append(self._items_c.sword())
-            return (
-                "You firmly grab the the bucket over your head and slowly descend into "
-                "the water. When you are at the bottom, you use one hand to feel "
-                "around. You swim back up and realise you are holding a sword."
-            )
-
+    def _inspect(self, cmd: "Command"):
+        wheel = self._objects_c.heavy_door_wheel()
+        direction = "left" if wheel.state is wheel.States.OPEN else "right"
         return (
-            "You jump in the well but can't find the glimmer before running out of "
-            "breath."
+            f"A heavy door with a wheel on it. The wheel is turned to the {direction}."
         )
 
-
-class RiverService(Service[River]):
-    object_type = River
-
-    def _fill_bucket(self, bucket: "Bucket") -> str:
-        if bucket not in self._player.inventory:
-            return "You don't have a bucket."
-
-        if bucket in self._player.equipped:
-            return "You can't fill something you have equipped."
-
-        if bucket.state is not bucket.States.EMPTY:
-            return "The bucket is already full."
-
-        bucket.state = bucket.States.WATER
-
-        return "You fill the bucket with water."
-
-    def _fill(self, cmd: "Command") -> str:
-        if isinstance(cmd.preposition_object, type(self._items_c.bucket())):
-            return self._fill_bucket(cmd.preposition_object)  # noqa
-        return f"You can't fill that: {cmd.preposition_object.name.upper()}"
+    def _open(self, cmd: "Command"):
+        wheel = self._objects_c.heavy_door_wheel()
+        if wheel.state is wheel.States.CLOSED:
+            return "The door is locked."
+        if wheel.state is wheel.States.OPEN:
+            print(
+                "You open the door and it flies open. You are sucked into the void. In your last moments, you feel the pressure escaping your body. Your eyes pop and your head explodes. You are dead."
+            )
+            exit(0)
 
 
-class BucketService(ItemService):
-    object_type = Bucket
+class HeavyDoorWheelService(Service[HeavyDoorWheel]):
+    object_type = HeavyDoorWheel
 
-    def _fill_bucket(self, bucket: "Bucket") -> str:
-        if bucket not in self._player.inventory:
-            return "You don't have a bucket."
-
-        if bucket in self._player.equipped:
-            return "You can't fill something you have equipped."
-
-        if bucket.state is not bucket.States.EMPTY:
-            return "The bucket is already full."
-
-        bucket.state = bucket.States.WATER
-
-        return "You fill the bucket with water."
-
-    def _fill(self, cmd: "Command") -> str:
-        if isinstance(cmd.preposition_object, type(self._objects_c.river())):
-            from src.containers import Services
-
-            with switch_command_objects(cmd):
-                return Services.river_service()._fill(cmd)
-
-        return f"You can't fill that: {cmd.preposition_object.name.upper()}"
-
-    def _empty(self, cmd: "Command") -> str:
-        cmd.object: Bucket  # noqa
-
-        if cmd.preposition_object is not self._objects_c.well():
-            return f"You can't empty that there: {cmd.preposition_object.name.upper()}"
-        cmd.preposition_object: "Well"  # noqa
-
-        from src.containers import Services
-
-        with switch_command_objects(cmd):
-            return Services.well_service()._fill(cmd)
+    def _turn(self, cmd: "Command"):
+        wheel = self._objects_c.heavy_door_wheel()
+        if wheel.state is wheel.States.OPEN:
+            wheel.state = wheel.States.CLOSED
+        if wheel.state is wheel.States.CLOSED:
+            wheel.state = wheel.States.OPEN
+        return "You turn the wheel."

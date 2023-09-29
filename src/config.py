@@ -67,6 +67,36 @@ action_usage_mapping = {
             preposition_object_types=[Item, Object],
         ),
     ],
+    PlayerAction.TURN: [
+        CommandUsage(
+            action=PlayerAction.TURN,
+            object_types=[Object],
+        ),
+    ],
+    PlayerAction.HIT: [
+        CommandUsage(
+            action=PlayerAction.HIT,
+            object_types=[Object],
+        ),
+    ],
+    PlayerAction.USE: [
+        CommandUsage(
+            action=PlayerAction.USE,
+            object_types=[Object],
+        ),
+    ],
+    PlayerAction.PRESS: [
+        CommandUsage(
+            action=PlayerAction.PRESS,
+            object_types=[Object],
+        ),
+    ],
+    PlayerAction.OPEN: [
+        CommandUsage(
+            action=PlayerAction.OPEN,
+            object_types=[Object],
+        ),
+    ],
 }
 
 

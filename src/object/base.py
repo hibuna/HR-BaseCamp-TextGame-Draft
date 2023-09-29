@@ -58,7 +58,11 @@ class Object(Interactable):
         A list of items that the object contains.
     """
 
+    shown: bool = True
     items: Optional[list["Item"]]
+
+    def __init__(self, items: list["Item"] = None):
+        self.items = items
 
 
 class Item(Interactable):

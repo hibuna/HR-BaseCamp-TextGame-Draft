@@ -7,12 +7,23 @@ from src.resolvers import (
     ServiceResolver,
     CommandObjectResolver,
 )
-from src.service import Service, ItemService, WellService, RiverService, BucketService
+from src.service import (
+    Service,
+    ItemService,
+    PrologueControlPanelService,
+    PrologueControlPanelButtonService,
+    HeavyDoorService,
+    HeavyDoorWheelService,
+)
 from src.player import Player
-from src.effect import WaterBreathing
-from src.object.items import Sword, Bucket
-from src.object.objects import Well, River
-from src.environment import TownSquare
+from src.object.objects import (
+    HeavyDoorWheel,
+    HeavyDoor,
+    PrologueControlPanelButton,
+    PrologueControlPanel,
+    ControlPanel,
+)
+from src.environment import PrologueCockpit, Cockpit
 
 
 class CustomContainer(DeclarativeContainer):
@@ -26,27 +37,38 @@ class Globals(DeclarativeContainer):
 
 
 class Effects(DeclarativeContainer):
-    water_breathing = Singleton(WaterBreathing)
+    ...
 
 
 class Items(CustomContainer):
-    bucket = Singleton(Bucket, effects=[Effects.water_breathing()])
-    sword = Singleton(Sword)
+    ...
 
 
 class Objects(CustomContainer):
-    well = Singleton(
-        Well,
-        items=[Items.sword()],
-    )
-    river = Singleton(River)
+    prologue_control_panel = Singleton(PrologueControlPanel)
+    prologue_control_panel_button = Singleton(PrologueControlPanelButton)
+    control_panel = Singleton(ControlPanel)
+    heavy_door_wheel = Singleton(HeavyDoorWheel)
+    heavy_door = Singleton(HeavyDoor)
 
 
 class Environments(DeclarativeContainer):
-    town_square = Singleton(
-        TownSquare,
-        objects=[Objects.well(), Objects.river()],
-        items=[Items.bucket()],
+    prologue_cockpit = Singleton(
+        PrologueCockpit,
+        objects=[
+            Objects.prologue_control_panel(),
+            Objects.prologue_control_panel_button(),
+            Objects.heavy_door_wheel(),
+            Objects.heavy_door(),
+        ],
+    )
+    cockpit = Singleton(
+        Cockpit,
+        objects=[
+            Objects.control_panel(),
+            Objects.heavy_door(),
+            Objects.heavy_door_wheel(),
+        ],
     )
 
 
@@ -67,24 +89,32 @@ class Services(CustomContainer):
         objects_c=Objects,
         environments_c=Environments,
     )
-    well_service = Singleton(
-        WellService,
+    prologue_control_panel_service = Singleton(
+        PrologueControlPanelService,
         player=Globals.player(),
         effects_c=Effects,
         items_c=Items,
         objects_c=Objects,
         environments_c=Environments,
     )
-    river_service = Singleton(
-        RiverService,
+    prologue_control_panel_button_service = Singleton(
+        PrologueControlPanelButtonService,
         player=Globals.player(),
         effects_c=Effects,
         items_c=Items,
         objects_c=Objects,
         environments_c=Environments,
     )
-    bucket_service = Singleton(
-        BucketService,
+    heavy_door_service = Singleton(
+        HeavyDoorService,
+        player=Globals.player(),
+        effects_c=Effects,
+        items_c=Items,
+        objects_c=Objects,
+        environments_c=Environments,
+    )
+    heavy_door_wheel_service = Singleton(
+        HeavyDoorWheelService,
         player=Globals.player(),
         effects_c=Effects,
         items_c=Items,
