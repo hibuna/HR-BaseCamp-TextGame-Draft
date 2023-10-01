@@ -168,7 +168,7 @@ class CommandValidator:
         if not self._object_required and not self.cmd.object_str:
             return
 
-        if casefold_in(self.cmd.object_str, ["self", "player"]):
+        if casefold_in(self.cmd.object_str or "", ["self", "player"]):
             return
 
         if self._object_required and not self.cmd.object_str:
