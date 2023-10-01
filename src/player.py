@@ -1,6 +1,8 @@
 import logging
 from typing import TYPE_CHECKING, Optional
 
+from src.enums import PlayerAction
+
 if TYPE_CHECKING:
     from src.enums import EquipableSlot
     from src.effect import Effect
@@ -28,6 +30,17 @@ class Player:
 
     name: str = "player"
     environment: "Environment"
+
+    interactions = [
+        PlayerAction.INSPECT,
+    ]
+
+    @property
+    def description(self):
+        str_ = "That's you."
+        if self.effects:
+            str_ += f" You have the following effects: {', '.join([effect.name.upper() for effect in self.effects])}."
+        return str_.strip()
 
     def __init__(
         self,

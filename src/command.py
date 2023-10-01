@@ -1,7 +1,7 @@
 import logging
 from typing import TYPE_CHECKING, Optional, Union
 
-from src.utils import casefold_index, enum_has, subclass_in_list, enum_get
+from src.utils import casefold_index, enum_has, subclass_in_list, enum_get, casefold_in
 from src.enums import PlayerAction, PlayerActionPreposition, UsageFormat
 from src.object.base import Object, Item
 
@@ -166,6 +166,9 @@ class CommandValidator:
 
     def _validate_object(self) -> None:
         if not self._object_required and not self.cmd.object_str:
+            return
+
+        if casefold_in(self.cmd.object_str, ["self", "player"]):
             return
 
         if self._object_required and not self.cmd.object_str:

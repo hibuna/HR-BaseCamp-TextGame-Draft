@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Optional, Union, Any
 
 from src.enums import PlayerAction
+from src.player import Player
 from src.service import Service
 from src.utils import casefold_equals, casefold_in, enum_get, subclass_in_list
 from src.object.base import Object, Item
@@ -63,7 +64,8 @@ class ServiceResolver(Resolver):
 
 
 class CommandObjectResolver:
-    def __init__(self, items_r: ItemResolver, objects_r: ObjectResolver):
+    def __init__(self, player: Player, items_r: ItemResolver, objects_r: ObjectResolver):
+        self._player = player
         self._resolvers = [items_r, objects_r]
 
     def resolve(
@@ -82,7 +84,9 @@ class CommandObjectResolver:
 
     def _resolve_with_resolvers(
         self, object_: str
-    ) -> Optional[Union["Item", "Object"]]:
+    ) -> Optional[Union["Item", "Object", "Player"]]:
+        if object_ and casefold_in(object_, ["self", "player"]):
+            return self._player
         for resolver in self._resolvers:
             resolved_object = resolver.resolve(object_)
             if resolved_object:

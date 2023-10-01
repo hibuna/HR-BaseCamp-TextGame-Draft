@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, Union, Optional
 
 from src.enums import PlayerAction
 from src.command import Command
+from src.environment import Environment
 from src.utils import subclass_in_list
 from src.object.base import Item
 

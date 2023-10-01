@@ -47,6 +47,9 @@ class Interactable:
         except AttributeError:
             return [self.name]
 
+    def remove_reference(self, name: str):
+        self._references.remove(name)
+
 
 class Object(Interactable):
     """

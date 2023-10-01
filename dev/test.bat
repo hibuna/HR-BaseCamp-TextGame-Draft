@@ -1,0 +1,1 @@
+pyenv exec pipenv run python -m unittest discover src "*_test.py" -v %*

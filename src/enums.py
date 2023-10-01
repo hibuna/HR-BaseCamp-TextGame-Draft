@@ -29,6 +29,8 @@ class PlayerAction(CustomEnum):
     USE = enum.auto()
     PRESS = enum.auto()
     OPEN = enum.auto()
+    CLOSE = enum.auto()
+    REPAIR = enum.auto()
 
 
 class PlayerActionPreposition(CustomEnum):

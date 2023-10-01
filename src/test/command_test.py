@@ -163,8 +163,8 @@ class CommandValidatorTest(TestCase):
             self.assertEqual("Action not recognized: INVALID", str(e))
 
     def test_object_valid(self):
-        self.validator.cmd = create_command(action_str="inspect", object_str="well")
-        self.validator._player.environment.objects = [Objects.well()]
+        self.validator.cmd = create_command(action_str="inspect", object_str="control panel")
+        self.validator._player.environment.objects = [Objects.control_panel()]
         self.validator._validate_object()
 
     def test_object_missing(self):
@@ -188,26 +188,26 @@ class CommandValidatorTest(TestCase):
             self.assertEqual("Object not found: INVALID", str(e))
 
     def test_object_unavailable(self):
-        self.validator.cmd = create_command(action_str="fill", object_str="bucket")
+        self.validator.cmd = create_command(action_str="equip", object_str="space suit")
 
         try:
             self.validator._validate_object()
         except ValueError as e:
-            self.assertEqual("Object not found: BUCKET", str(e))
+            self.assertEqual("Object not found: SPACE SUIT", str(e))
 
     def test_object_has_no_action(self):
-        self.validator.cmd = create_command(action_str="equip", object_str="river")
-        self.validator._player.environment.objects = [Objects.river()]
+        self.validator.cmd = create_command(action_str="equip", object_str="control panel")
+        self.validator._player.environment.objects = [Objects.control_panel()]
 
         try:
             self.validator._validate_object()
         except ValueError as e:
-            self.assertEqual(f"Cannot perform: EQUIP on RIVER", str(e))
+            self.assertEqual(f"Cannot perform: EQUIP on CONTROL PANEL", str(e))
 
     def test_preposition_valid(self):
         self.validator.cmd = create_command(
             action_str="fill",
-            object_str="bucket",
+            object_str="space suit",
             preposition_str="with",
         )
         self.validator._validate_preposition()
@@ -215,7 +215,7 @@ class CommandValidatorTest(TestCase):
     def test_preposition_missing(self):
         self.validator.cmd = create_command(
             action_str="fill",
-            object_str="bucket",
+            object_str="space suit",
         )
 
         try:
@@ -226,7 +226,7 @@ class CommandValidatorTest(TestCase):
     def test_preposition_invalid(self):
         self.validator.cmd = create_command(
             action_str="fill",
-            object_str="bucket",
+            object_str="space suit",
             preposition_str="invalid",
         )
 
@@ -238,7 +238,7 @@ class CommandValidatorTest(TestCase):
     def test_preposition_not_for_action(self):
         self.validator.cmd = create_command(
             action_str="inspect",
-            object_str="bucket",
+            object_str="space suit",
             preposition_str="with",
         )
 
@@ -250,12 +250,12 @@ class CommandValidatorTest(TestCase):
     def test_preposition_object_valid(self):
         self.validator.cmd = create_command(
             action_str="fill",
-            object_str="bucket",
+            object_str="control panel",
             preposition_str="with",
-            preposition_object_str="river",
+            preposition_object_str="space suit",
         )
-        self.validator._player.environment.objects = [Objects.river()]
-        self.validator._player.environment.items = [Items.bucket()]
+        self.validator._player.environment.objects = [Objects.control_panel()]
+        self.validator._player.inventory = [Items.space_suit()]
 
         self.validator._validate_preposition_object()
 
@@ -269,7 +269,7 @@ class CommandValidatorTest(TestCase):
     def test_preposition_object_missing(self):
         self.validator.cmd = create_command(
             action_str="fill",
-            object_str="bucket",
+            object_str="control panel",
             preposition_str="with",
         )
 
@@ -281,7 +281,7 @@ class CommandValidatorTest(TestCase):
     def test_preposition_object_invalid(self):
         self.validator.cmd = create_command(
             action_str="fill",
-            object_str="bucket",
+            object_str="space suit",
             preposition_str="with",
             preposition_object_str="invalid",
         )
@@ -294,28 +294,28 @@ class CommandValidatorTest(TestCase):
     def test_preposition_object_unavailable_object(self):
         self.validator.cmd = create_command(
             action_str="fill",
-            object_str="bucket",
+            object_str="space suit",
             preposition_str="with",
-            preposition_object_str="river",
+            preposition_object_str="control panel",
         )
 
         try:
             self.validator._validate_preposition_object()
         except ValueError as e:
-            self.assertEqual("Object not found: RIVER", str(e))
+            self.assertEqual("Object not found: CONTROL PANEL", str(e))
 
     def test_preposition_object_unavailable_item(self):
         self.validator.cmd = create_command(
             action_str="fill",
-            object_str="bucket",
+            object_str="control panel",
             preposition_str="with",
-            preposition_object_str="bucket",
+            preposition_object_str="space suit",
         )
 
         try:
             self.validator._validate_preposition_object()
         except ValueError as e:
-            self.assertEqual("Object not found: BUCKET", str(e))
+            self.assertEqual("Object not found: SPACE SUIT", str(e))
 
     # TODO: test helper methods and properties
 

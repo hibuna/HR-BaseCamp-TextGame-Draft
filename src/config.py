@@ -1,7 +1,7 @@
 from src.command import CommandUsage
 from src.enums import PlayerAction, PlayerActionPreposition
 from src.object.base import Item, Object, Equipable
-
+from src.player import Player
 
 action_usage_mapping = {
     PlayerAction.QUIT: [
@@ -24,7 +24,7 @@ action_usage_mapping = {
         ),
         CommandUsage(
             action=PlayerAction.INSPECT,
-            object_types=[Object, Item],
+            object_types=[Object, Item, Player],
         ),
     ],
     PlayerAction.PICKUP: [
@@ -82,7 +82,13 @@ action_usage_mapping = {
     PlayerAction.USE: [
         CommandUsage(
             action=PlayerAction.USE,
-            object_types=[Object],
+            object_types=[Item, Object],
+        ),
+        CommandUsage(
+            action=PlayerAction.USE,
+            object_types=[Item, Object],
+            preposition=PlayerActionPreposition.ON,
+            preposition_object_types=[Item, Object],
         ),
     ],
     PlayerAction.PRESS: [
@@ -95,6 +101,20 @@ action_usage_mapping = {
         CommandUsage(
             action=PlayerAction.OPEN,
             object_types=[Object],
+        ),
+    ],
+    PlayerAction.CLOSE: [
+        CommandUsage(
+            action=PlayerAction.CLOSE,
+            object_types=[Object],
+        ),
+    ],
+    PlayerAction.REPAIR: [
+        CommandUsage(
+            action=PlayerAction.REPAIR,
+            object_types=[Object, Item],
+            preposition=PlayerActionPreposition.WITH,
+            preposition_object_types=[Object, Item],
         ),
     ],
 }

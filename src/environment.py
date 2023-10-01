@@ -65,3 +65,48 @@ class PrologueCockpit(Environment):
 class Cockpit(Environment):
     name = "cockpit"
     description = "You are in the cockpit."
+
+
+class Hallway(Environment):
+    name = "hallway"
+    description = "You are in a long empty hallway."
+
+
+class Bathroom(Environment):
+    name = "bathroom"
+    description = "You are in a bathroom. You see 107 doors with different signs."
+
+
+class EngineRoom(Environment):
+    name = "engine room"
+    description = "You are in the engine room. You see a huge round metal contraption. That must be the engine."
+
+
+class Workshop(Environment):
+    name = "workshop"
+    description = "You are in the workshop. You see a workbench."
+
+
+class Bedroom(Environment):
+    name = "bedroom"
+    description = "You are in the bedroom. There's a single bed. You must be dry as a bone."
+
+
+class StorageRoom(Environment):
+    name = "storage room"
+    description = "You are in the storage room."
+
+
+class Armory(Environment):
+    name = "armory"
+    description = "You are in the armory."
+
+
+class Canteen(Environment):
+    name = "canteen"
+    description = "You are in the canteen. You see a table with a few chairs."
+
+
+class Outside(Environment):
+    name = "outside"
+    description = "You are floating around the ship."

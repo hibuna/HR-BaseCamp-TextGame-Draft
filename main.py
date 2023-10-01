@@ -3,7 +3,7 @@ import sys
 
 from src.command import CommandValidator
 from src.config import Config
-from src.containers import Globals, Environments, Items, Objects, Services, Resolvers
+from src.containers import Globals, Environments, Items, Objects, Services, Resolvers, Effects
 from src.core import Engine
 from src.utils import overlap
 
@@ -12,6 +12,10 @@ if overlap(["-d", "--debug"], sys.argv[1:]):
 
 player = Globals.player()
 player.environment = Environments.prologue_cockpit()
+player.effects = [Effects.full_bladder()]
+
+player.inventory = [Items.fuel_can()]
+player.environment = Environments.engine_room()
 
 command_validator = CommandValidator(
     player=player,

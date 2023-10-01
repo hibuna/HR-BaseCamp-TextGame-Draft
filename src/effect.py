@@ -20,6 +20,11 @@ class Effect:
         return f"{self.name.upper()}"
 
 
-class WaterBreathing(Effect):
-    name = "Water Breathing"
-    description = "You can breathe underwater."
+class VacuumResistance(Effect):
+    name = "vacuum resistance"
+    description = "You can enter the void."
+
+
+class FullBladder(Effect):
+    name = "full bladder"
+    description = "You need to pee."
